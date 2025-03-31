@@ -1,34 +1,63 @@
-import { ProductModel } from "../models/Product";
-import { ProductDTO, ProductMapper } from "../interfaces/Product";
+import ProductModel from "../models/Product"; // Ensure the file exists at src/models/ProductModel.ts
+import { Product } from "../interfaces/Product";
 
-class ProductService {
-  async createProduct(data: ProductDTO) {
-    const product = await ProductModel.create(data);
-    return ProductMapper.toDTO(product);
-  }
+class ProductDto {
+  name: string;
+  price: number;
+  description: string;
+  stock: number;
+  category?: string;
 
-  async getAllProducts() {
-    const products = await ProductModel.find();
-    return products.map(ProductMapper.toDTO);
-  }
+  constructor(data: Product) {
+    if (!data.name || typeof data.name !== "string") {
+      throw new Error("Invalid 'name': Must be a non-empty string.");
+    }
+    if (typeof data.price !== "number" || data.price < 0) {
+      throw new Error("Invalid 'price': Must be a positive number.");
+    }
+    if (!data.description || typeof data.description !== "string") {
+      throw new Error("Invalid 'description': Must be a non-empty string.");
+    }
+    if (typeof data.stock !== "number" || data.stock < 0) {
+      throw new Error("Invalid 'stock': Must be a non-negative number.");
+    }
+    if (data.category && typeof data.category !== "string") {
+      throw new Error("Invalid 'category': Must be a string.");
+    }
 
-  async getProductById(id: string) {
-    const product = await ProductModel.findById(id);
-    return product ? ProductMapper.toDTO(product) : null;
-  }
-
-  async updateProduct(id: string, data: Partial<ProductDTO>) {
-    const product = await ProductModel.findByIdAndUpdate(id, data, {
-      new: true,
-    });
-    return product ? ProductMapper.toDTO(product) : null;
-  }
-
-  async deleteProduct(id: string) {
-    const product = await ProductModel.findByIdAndDelete(id);
-    return product !== null;
+    this.name = data.name.trim();
+    this.price = data.price;
+    this.description = data.description.trim();
+    this.stock = data.stock;
+    this.category = data.category?.trim();
   }
 }
 
-const productService = new ProductService();
-export { productService };
+class ProductService {
+  async createProduct(data: Product): Promise<Product> {
+    const dto = new ProductDto(data);
+    const product = new ProductModel(dto);
+    await product.save();
+    return product.toObject() as Product;
+  }
+
+  async getProducts(): Promise<Product[]> {
+    return await ProductModel.find();
+  }
+
+  async getProductById(id: string): Promise<Product | null> {
+    return await ProductModel.findById(id);
+  }
+
+  async updateProduct(id: string, data: Product): Promise<Product | null> {
+    const dto = new ProductDto(data);
+    return await ProductModel.findByIdAndUpdate(id, dto, { new: true });
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    const result = await ProductModel.findByIdAndDelete(id);
+    return !!result;
+  }
+}
+
+export default new ProductService();
