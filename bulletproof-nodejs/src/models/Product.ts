@@ -1,12 +1,6 @@
-// src/models/ProductSchema.ts
-
 import mongoose, { Schema, model } from "mongoose";
 import { Product } from "../interfaces/Product";
 
-/**
- * MongoDB Schema for Products using the Product Interface.
- * This ensures strict typing & consistency across DB and API.
- */
 const ProductSchema = new Schema<Product>(
   {
     name: {
@@ -30,4 +24,4 @@ const ProductSchema = new Schema<Product>(
   { timestamps: true }
 );
 
-export default model<ProductInterface>("Product", ProductSchema);
+export default model<Product>("Product", ProductSchema);
