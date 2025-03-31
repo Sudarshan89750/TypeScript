@@ -1,26 +1,33 @@
-import mongoose, { Schema, Document } from 'mongoose';
+// src/models/ProductSchema.ts
 
-interface Product extends Document {
-  name: string;
-  price: number;
-  description: string;
-  stock: number;
-  category?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+import mongoose, { Schema, model } from "mongoose";
+import { Product } from "../interfaces/Product";
 
-const ProductSchema: Schema = new Schema(
+/**
+ * MongoDB Schema for Products using the Product Interface.
+ * This ensures strict typing & consistency across DB and API.
+ */
+const ProductSchema = new Schema<Product>(
   {
-    name: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: { type: String, required: true },
-    stock: { type: Number, default: 0 },
-    category: { type: String },
+    name: {
+      type: String,
+      required: [true, "Product name is required"],
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: [true, "Product price is required"],
+      min: [0, "Price cannot be negative"],
+    },
+    description: {
+      type: String,
+      required: [true, "Product description is required"],
+      trim: true,
+    },
+    stock: { type: Number, default: 0, min: [0, "Stock cannot be negative"] },
+    category: { type: String, trim: true },
   },
   { timestamps: true }
 );
 
-const ProductModel = mongoose.model<Product>("Product", ProductSchema);
-
-export { Product, ProductModel };
+export default model<ProductInterface>("Product", ProductSchema);

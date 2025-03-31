@@ -1,5 +1,5 @@
-import { ProductModel } from "../model/Product";
-import { ProductDTO, ProductMapper } from "../interfaces/ProductInterface";
+import { ProductModel } from "../models/Product";
+import { ProductDTO, ProductMapper } from "../interfaces/Product";
 
 class ProductService {
   async createProduct(data: ProductDTO) {
@@ -18,7 +18,9 @@ class ProductService {
   }
 
   async updateProduct(id: string, data: Partial<ProductDTO>) {
-    const product = await ProductModel.findByIdAndUpdate(id, data, { new: true });
+    const product = await ProductModel.findByIdAndUpdate(id, data, {
+      new: true,
+    });
     return product ? ProductMapper.toDTO(product) : null;
   }
 
