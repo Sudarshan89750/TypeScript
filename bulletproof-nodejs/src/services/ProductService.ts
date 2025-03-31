@@ -1,7 +1,7 @@
-import ProductModel from "../models/Product"; // Ensure the file exists at src/models/ProductModel.ts
+import ProductModel from "../models/Product";
 import { Product } from "../interfaces/Product";
 
-class ProductDto {
+export class ProductDto {
   name: string;
   price: number;
   description: string;
@@ -34,8 +34,7 @@ class ProductDto {
 }
 
 class ProductService {
-  async createProduct(data: Product): Promise<Product> {
-    const dto = new ProductDto(data);
+  async createProduct(dto: ProductDto): Promise<Product> {
     const product = new ProductModel(dto);
     await product.save();
     return product.toObject() as Product;
@@ -49,8 +48,7 @@ class ProductService {
     return await ProductModel.findById(id);
   }
 
-  async updateProduct(id: string, data: Product): Promise<Product | null> {
-    const dto = new ProductDto(data);
+  async updateProduct(id: string, dto: ProductDto): Promise<Product | null> {
     return await ProductModel.findByIdAndUpdate(id, dto, { new: true });
   }
 
