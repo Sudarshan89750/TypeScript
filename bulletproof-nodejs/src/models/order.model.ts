@@ -1,14 +1,24 @@
 import { model, Schema } from "mongoose";
 const orderSchema = new Schema(
   {
-    orderId: { type: String, required: true },
-    userId: { type: String, required: true },
-    productName: { type: String, required: true },
+    orderId: {
+      type: String,
+      required: [true, "Order ID is required"],
+    },
+    userId: {
+      type: String,
+      required: [true, "User ID is required"],
+    },
+    productName: {
+      type: String,
+      required: [true, "Product name is required"],
+      trim: true,
+    },
     status: {
       type: String,
       enum: ["pending", "shipped", "delivered", "cancelled"],
       default: "pending",
-      required: true,
+      //   required: true,
     },
   },
   { timestamps: true }
