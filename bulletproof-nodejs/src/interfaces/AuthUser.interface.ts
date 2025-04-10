@@ -5,14 +5,14 @@ export interface AuthUser {
 export class AuthUserDto {
   name: string;
   password: string;
-  constructor(name: string, password: string) {
-    if (typeof name !== "string") {
+  constructor(User: AuthUser) {
+    if (typeof User.name !== "string") {
       throw new Error("Name must be a string");
     }
-    if (typeof password !== "string") {
+    if (typeof User.password !== "string") {
       throw new Error("Password must be a string");
     }
-    this.name = name;
-    this.password = password;
+    this.name = User.name;
+    this.password = User.password;
   }
 }
