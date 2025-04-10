@@ -1,5 +1,5 @@
 import { userData as user } from "../Utils/user";
-import { generateToken } from "../utils/jwtUtils";
+import { generateToken } from "../Utils/jwtUtils";
 
 const loginUser = (username, password) => {
   if (username === user.username && password === user.password) {
@@ -15,4 +15,6 @@ const loginUser = (username, password) => {
   return null;
 };
 
-module.exports = { loginUser };
+module.exports = {
+  loginUser,
+};
