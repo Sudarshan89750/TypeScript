@@ -1,14 +1,35 @@
-import Router from "express";
-import AuthService from "@/services/auth";
+import { Router } from "express";
+const router = Router();
+import { validateToken } from "../middleware/authMiddleware";
+import { loginUser } from "../services/authService";
 
-import { AuthUserDto, AuthUser } from "@/interfaces/AuthUser.interface";
-const router=Router();
-router.post("/login", async (req, res) => {
-  const userData: AuthUserDto = req.body;
-  try {
-    const { accessToken, refreshToken } = await AuthService.login(userData);
-    res.json({ accessToken, refreshToken });
-  } catch (error) {
-    res.status(401).json({ message: "Invalid credentials" });
+// Login Route
+router.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  const result = loginUser(username, password);
+
+  if (result) {
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token: result.token,
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Invalid username or password",
+    });
   }
-}
+});
+
+// Protected Route
+router.get("/protected", validateToken, (req, res) => {
+  res.json({
+    success: true,
+    message: "Welcome to the protected route!",
+    user: req.user,
+  });
+});
+
+export default router;
