@@ -3,7 +3,6 @@ const router = Router();
 import { validateToken } from "../middleware/authMiddleware";
 import { loginUser } from "../services/authService";
 
-// Login Route
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
 
@@ -23,7 +22,6 @@ router.post("/login", (req, res) => {
   }
 });
 
-// Protected Route
 router.get("/protected", validateToken, (req, res) => {
   res.json({
     success: true,
